@@ -24,6 +24,12 @@ export class User {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' })
   transactions: Transaction[];
+
+  @Prop({ default: Date.now() })
+  createdAt: Date;
+
+  @Prop({ default: Date.now() })
+  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
