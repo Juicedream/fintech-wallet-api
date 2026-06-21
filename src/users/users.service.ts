@@ -9,12 +9,14 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { comparePasswords, hashPassword } from '../../utils';
 import { JwtService } from '@nestjs/jwt';
+import { WalletsService } from '../wallets/wallets.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private jwtService: JwtService,
+    private walletService: WalletsService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -29,7 +31,10 @@ export class UsersService {
 
   async getUserProfile(userId: string): Promise<User | undefined> {
     if (!userId) throw new BadRequestException('User Id is missing');
-    const user = await this.userModel.findById(userId).select('-password');
+    const user = await this.userModel
+      .findById(userId)
+      .select('-password')
+      .populate('wallet');
     if (!user) throw new NotFoundException('User not found');
     return user;
   }
@@ -45,6 +50,13 @@ export class UsersService {
       ...createUserDto,
       password: hashedPassword,
     });
+
+    // create wallet service
+    const newWallet = await this.walletService.createWallet(
+      String(newUser._id),
+      { name: `${newUser.name.split(' ')[0]}'s Wallet` },
+    );
+    newUser.wallet = String(newWallet._id);
     await newUser.save();
     return { message: 'Kindly login with the credentials', user: newUser };
   }
