@@ -14,4 +14,8 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     return this.usersService.loginUser(loginDto.email, loginDto.password);
   }
+
+  async getUserProfile(userId: string) {
+    return this.usersService.getUserProfile(userId);
+  }
 }

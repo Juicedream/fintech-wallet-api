@@ -5,6 +5,11 @@ import { Wallet } from '../wallets/wallet.schema';
 
 export type UserDocument = mongoose.HydratedDocument<User>;
 
+export enum Roles {
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
 @Schema()
 export class User {
   @Prop({ required: true })
@@ -15,6 +20,9 @@ export class User {
 
   @Prop({ required: true })
   password: string;
+
+  @Prop({ enum: [Roles.ADMIN, Roles.USER], default: Roles.USER })
+  role: string;
 
   @Prop({ default: false })
   isVerified: boolean;

@@ -14,3 +14,7 @@ export const comparePasswords = async (
 ) => {
   return await bcrypt.compare(password, hashedPassword);
 };
+
+export const matchRoles = (roles: string[], role: string) => {
+  return roles.includes(role.toLowerCase());
+};
