@@ -1,4 +1,12 @@
-import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
+import { Roles } from '../user.schema';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -12,4 +20,8 @@ export class CreateUserDto {
   @IsString()
   @Length(8)
   password: string;
+
+  @IsEnum(Roles)
+  @IsOptional()
+  role?: string;
 }

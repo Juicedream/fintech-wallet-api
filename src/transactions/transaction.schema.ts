@@ -3,10 +3,23 @@ import * as mongoose from 'mongoose';
 
 export type TransactionDocument = mongoose.HydratedDocument<Transaction>;
 
+enum transactionType {
+  TRANSFER = 'TRANSFER',
+  WITHDRAWAL = 'WITHDRAWAL',
+  TOPUP = 'TOPUP',
+}
+
 @Schema()
 export class Transaction {
-  @Prop({ required: true })
-  type: transactionType;
+  @Prop({
+    enum: [
+      transactionType.TOPUP,
+      transactionType.TRANSFER,
+      transactionType.WITHDRAWAL,
+    ],
+    required: true,
+  })
+  type: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   payerId: string;
@@ -28,9 +41,3 @@ export class Transaction {
 }
 
 export const TransactionSchema = SchemaFactory.createForClass(Transaction);
-
-enum transactionType {
-  TRANSFER,
-  WITHDRAWAL,
-  TOPUP,
-}

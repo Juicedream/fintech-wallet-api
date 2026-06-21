@@ -1,13 +1,21 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { comparePasswords, hashPassword } from '../../utils';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    private jwtService: JwtService,
+  ) {}
 
   async findAll(): Promise<User[]> {
     return await this.userModel.find().select('-password').exec();
@@ -16,6 +24,13 @@ export class UsersService {
   async findOne(email: string): Promise<User | undefined> {
     if (!email) throw new BadRequestException('Email is required');
     const user = await this.userModel.findOne({ email }).exec();
+    return user;
+  }
+
+  async getUserProfile(userId: string): Promise<User | undefined> {
+    if (!userId) throw new BadRequestException('User Id is missing');
+    const user = await this.userModel.findById(userId).select('-password');
+    if (!user) throw new NotFoundException('User not found');
     return user;
   }
 
@@ -31,17 +46,30 @@ export class UsersService {
       password: hashedPassword,
     });
     await newUser.save();
-    return newUser;
+    return { message: 'Kindly login with the credentials', user: newUser };
   }
 
-  async loginUser(email: string, password: string) {
+  async loginUser(
+    email: string,
+    password: string,
+  ): Promise<{ message: string; user: User; access_token: string }> {
     //find user via email
-    const user = await this.findOne(email);
+    const user = await this.userModel.findOne({ email }).exec();
     if (!user) throw new BadRequestException('Invalid credentials');
     // compare passwords
     const passwordsMatch = await comparePasswords(password, user.password);
     if (!passwordsMatch) throw new BadRequestException('Invalid credentials');
+    // create the jwt payload
+    const payload = {
+      sub: user?._id,
+      name: user.name,
+      role: user.role,
+    };
     // return the user
-    return { message: 'Logged in successfully', user };
+    return {
+      message: 'Logged in successfully',
+      user,
+      access_token: await this.jwtService.signAsync(payload),
+    };
   }
 }
