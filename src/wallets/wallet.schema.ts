@@ -11,6 +11,9 @@ export class Wallet {
   @Prop({ required: true })
   balance: number;
 
+  @Prop({ required: true, maxLength: 6 })
+  walletNumber: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   userId: string;
 

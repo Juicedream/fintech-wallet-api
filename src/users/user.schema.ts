@@ -4,7 +4,7 @@ import { Transaction } from '../transactions/transaction.schema';
 
 export type UserDocument = mongoose.HydratedDocument<User>;
 
-export enum Roles {
+export enum RolesEnum {
   ADMIN = 'ADMIN',
   USER = 'USER',
 }
@@ -20,7 +20,7 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ enum: [Roles.ADMIN, Roles.USER], default: Roles.USER })
+  @Prop({ enum: [RolesEnum.ADMIN, RolesEnum.USER], default: RolesEnum.USER })
   role: string;
 
   @Prop({ default: false })
