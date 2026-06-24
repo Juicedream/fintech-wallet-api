@@ -264,7 +264,7 @@ export class WalletsService {
             walletNumber: payerWallet.walletNumber,
             amount: transferDto.amount,
             reference: transferDto.reference,
-            reason: transferDto.reason,
+            reason: transferDto.reason || `Debited ${transferDto.amount}`,
             activity: 'DEBIT',
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -283,7 +283,7 @@ export class WalletsService {
             amount: transferDto.amount,
             activity: 'CREDIT',
             reference: transferDto.reference,
-            reason: transferDto.reason,
+            reason: transferDto.reason || `Credited ${transferDto.amount}`,
             createdAt: new Date(),
             updatedAt: new Date(),
           },
@@ -307,6 +307,8 @@ export class WalletsService {
         throw new UnauthorizedException(`Transfer failed - ${err}`);
       else if (errorMessage.includes('BadRequestException'))
         throw new BadRequestException(`Transfer failed - ${err}`);
+      else if (errorMessage.includes('NotFoundException'))
+        throw new NotFoundException(`Transfer failed - ${err}`);
       else
         throw new InternalServerErrorException(
           `Cannot transfer from wallet at the moment - please try again - ${err}`,
