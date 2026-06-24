@@ -21,6 +21,12 @@ export class Transaction {
   })
   type: string;
 
+  @Prop({
+    enum: ['CREDIT', 'DEBIT'],
+    required: true,
+  })
+  activity: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
   payerId: string;
 
@@ -28,9 +34,15 @@ export class Transaction {
   payeeId: string;
 
   @Prop({ required: true })
+  walletNumber: string;
+
+  @Prop({ required: true })
   amount: number;
 
-  @Prop()
+  @Prop({ required: true, minlength: 8, maxLength: 30 })
+  reference: string;
+
+  @Prop({ maxLength: 20 })
   reason: string;
 
   @Prop({ default: Date.now })

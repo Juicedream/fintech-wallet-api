@@ -5,11 +5,13 @@ import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { WalletsModule } from '../wallets/wallets.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TransactionsModule } from '../transactions/transactions.module';
 
 @Module({
   imports: [
     UsersModule,
     WalletsModule,
+    TransactionsModule,
     JwtModule.registerAsync({
       global: true,
       imports: [ConfigModule],

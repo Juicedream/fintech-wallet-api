@@ -12,26 +12,33 @@ import { comparePasswords, hashPassword } from '../../utils';
 import { WalletsService } from '../wallets/wallets.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { TransactionsService } from '../transactions/transactions.service';
 // import { UserDocument } from '../users/user.schema';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private walletService: WalletsService,
-    private jwtService: JwtService,
-    private configService: ConfigService,
+    private readonly usersService: UsersService,
+    private readonly walletService: WalletsService,
+    private readonly jwtService: JwtService,
+    private readonly transactionsService: TransactionsService,
+    private readonly configService: ConfigService,
   ) {}
 
-  private showUser(user: any) {
+  private async showUser(user: any) {
     return {
       id: String(user?._id),
       email: user.email,
       name: user.name,
       role: user.role,
-      wallet: user.wallet ?? 'Shown below',
+      wallet:
+        (await this.walletService.showWalletInformation(user.wallet)) ??
+        'Shown below',
       isVerified: user.isVerified,
-      transactions: user.transactions ?? [],
+      transactions:
+        (await this.transactionsService.showForCurrentUser(
+          user.transactions,
+        )) ?? [],
     };
   }
 
@@ -62,7 +69,7 @@ export class AuthService {
 
     return {
       message: 'Kindly login with the credentials',
-      user: this.showUser(updateUser),
+      user: await this.showUser(updateUser),
       wallet: newWallet,
     };
   }
@@ -89,7 +96,7 @@ export class AuthService {
     return {
       message: 'Login sucessful',
       accessToken,
-      user: this.showUser(user),
+      user: await this.showUser(user),
     };
   }
 
@@ -106,6 +113,6 @@ export class AuthService {
   async me(userId: string) {
     const user = await this.usersService.getById(userId);
     if (!user) throw new NotFoundException('User with this id not found');
-    return this.showUser(user);
+    return await this.showUser(user);
   }
 }

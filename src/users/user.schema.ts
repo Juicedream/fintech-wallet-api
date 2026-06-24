@@ -29,7 +29,7 @@ export class User {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Wallet' })
   wallet: string;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' })
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' }])
   transactions: Transaction[];
 
   @Prop({ default: Date.now })

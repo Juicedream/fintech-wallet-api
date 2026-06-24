@@ -8,7 +8,11 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { WalletsService } from './wallets.service';
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { AuthGuard } from '../auth/auth.guard';
 import { TopUpWalletDto } from './dto/top-up-wallet.dto';
 import { WithdrawFromWalletDto } from './dto/withdraw-from-wallet.dto';
@@ -43,6 +47,7 @@ export class WalletsController {
   @ApiOperation({ summary: 'Withdraw from wallet' })
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
+  @ApiCreatedResponse({ description: 'Withdrawal successful' })
   @Post('withdrawal')
   async withdraw(
     @Request() req: any,

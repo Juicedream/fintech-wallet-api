@@ -31,7 +31,7 @@ export class AuthGuard implements CanActivate {
         role: payload.role,
       };
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Token is expired, kindly login');
     }
     return true;
   }
