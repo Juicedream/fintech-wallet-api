@@ -16,7 +16,9 @@ import { ApiBearerAuth, ApiOperation, ApiQuery } from '@nestjs/swagger';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @ApiOperation({ summary: 'Shows all users or a specific user by email' })
+  @ApiOperation({
+    summary: 'Shows all users or a specific user by email for admins',
+  })
   @ApiQuery({
     name: 'email',
     required: false,
@@ -28,13 +30,13 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   async get(@Query('email') email?: string) {
     if (email) {
-      const user = await this.usersService.getByEmail(email);
+      const user = await this.usersService.getByEmail(email, false);
       if (!user)
         throw new NotFoundException(
           'No user with this email address: ' + email,
         );
       return user;
     }
-    return this.usersService.getAll();
+    return this.usersService.getAll(false);
   }
 }

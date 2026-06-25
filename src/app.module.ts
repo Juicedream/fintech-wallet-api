@@ -8,6 +8,7 @@ import { TransactionsModule } from './transactions/transactions.module';
 import { WalletsModule } from './wallets/wallets.module';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { DisputesModule } from './disputes/disputes.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     TransactionsModule,
     WalletsModule,
     AuthModule,
+    DisputesModule,
   ],
   controllers: [AppController],
   providers: [

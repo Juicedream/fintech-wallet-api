@@ -35,7 +35,8 @@ export class AuthService {
         (await this.walletService.showWalletInformation(user.wallet)) ??
         'Shown below',
       isVerified: user.isVerified,
-      transactions:
+      transactions: user.transactions ? user.transactions.length : 0,
+      latest_transactions:
         (await this.transactionsService.showForCurrentUser(
           user.transactions,
         )) ?? [],

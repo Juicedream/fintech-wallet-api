@@ -14,16 +14,22 @@ export class UsersService {
     @InjectModel(Wallet.name) private walletModel: Model<Wallet>,
   ) {}
 
-  async getAll() {
-    return await this.userModel.find();
+  async getAll(showPassword: boolean = true) {
+    return showPassword
+      ? await this.userModel.find().exec()
+      : await this.userModel.find().select('-password').exec();
   }
 
-  async getById(userId: string) {
-    return await this.userModel.findById(userId);
+  async getById(userId: string, showPassword: boolean = true) {
+    return showPassword
+      ? await this.userModel.findById(userId).exec()
+      : await this.userModel.findById(userId).select('-password').exec();
   }
 
-  async getByEmail(email: string) {
-    return await this.userModel.findOne({ email });
+  async getByEmail(email: string, showPassword: boolean = true) {
+    return showPassword
+      ? await this.userModel.findOne({ email }).exec()
+      : await this.userModel.findOne({ email }).select('-password').exec();
   }
 
   async create(createUserDto: CreateUserDto) {

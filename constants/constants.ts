@@ -6,3 +6,5 @@ export const FilterTypesConstants = [
   'DEBIT',
   'CREDIT',
 ];
+
+export const DisputeStatusConstants = ['PENDING', 'RESOLVED', 'REJECTED'];

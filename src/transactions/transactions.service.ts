@@ -45,18 +45,16 @@ export class TransactionsService {
   async showForCurrentUser(transactionArray: string[]) {
     if (transactionArray.length < 1) return [];
     const transactions = await Promise.all([
-      ...transactionArray.map(
-        async (num) => await this.showTransactionById(num),
-      ),
+      ...transactionArray
+        .reverse()
+        .slice(0, 3)
+        .map(async (num) => await this.showTransactionById(num)),
     ]);
     return transactions;
   }
 
   async showTransactionById(transactionId: string) {
-    return await this.transactionsModel
-      .findById(String(transactionId))
-      .limit(3)
-      .exec();
+    return await this.transactionsModel.findById(String(transactionId)).exec();
   }
 
   async showHistory(
